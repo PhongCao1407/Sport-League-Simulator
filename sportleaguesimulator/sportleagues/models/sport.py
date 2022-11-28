@@ -6,3 +6,7 @@ class Sports(models.Model):
     class Meta:
         managed = True
         db_table = 'sports'
+    
+
+def __str__(self):
+    return self.name
