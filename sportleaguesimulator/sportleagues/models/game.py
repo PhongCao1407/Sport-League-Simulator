@@ -4,7 +4,6 @@ from .hometeam import HomeTeams
 from .awayteam import AwayTeams
 
 class Games(models.Model):
-    game_id = models.AutoField(primary_key=True)
     season_year = models.ForeignKey(GameDays, models.DO_NOTHING, db_column='season_year')
     date = models.DateField()
     league_id = models.IntegerField()
@@ -16,3 +15,4 @@ class Games(models.Model):
     class Meta:
         managed = True
         db_table = 'games'
+        unique_together = (('season_year', 'league_id', 'date', 'home_team', 'away_team'),)

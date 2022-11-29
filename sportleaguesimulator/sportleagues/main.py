@@ -13,19 +13,37 @@ from .utils.utils import print_list, generate_random_letter, generate_random_jer
 
 
 def main():
+    # Constants
     INPUT_TEXT = """\nPlease choose an option:\n
     1) Create new sport\n
     2) Create new league\n
+    3) Add team to league\n
+    4) Add player to team\n
+    5) Simulate season\n
+    Choose anything else to exit
     """
+    OPTIONS = set([1, 2, 3, 4, 5])
+
     option = int(input(INPUT_TEXT))
     
-    options = set([1, 2])
-    
-    while option in options:
+    while option in OPTIONS:
         if option == 1:
+            # Print existing sports
+            sports = Sports.objects.all()
+            print('Sports\n')
+            print_list(sports)
+
+            # Get sport name
+            sport_name = input('Please provide a sport name: ')
             create_sport()
         elif option == 2:
             create_league()
+        elif option == 3:
+            add_team_to_league()
+        elif option == 4:
+            add_player_to_team()
+        elif option == 5:
+            simulate_season()
         else:
             break
 
@@ -37,15 +55,7 @@ def main():
 CREATE Operations
 '''
 
-def create_sport():
-    # Print existing sports
-    sports = Sports.objects.all()
-    print('Sports\n')
-    print_list(sports)
-
-    # Get sport name
-    sport_name = input('Please provide a sport name: ')
-
+def create_sport(sport_name):
     # Create new sport
     try:
         new_sport = Sports(name=sport_name)
@@ -92,6 +102,7 @@ def create_league():
     # Generating teams
     num_of_teams = int(input('\nPlease choose the number of teams for the league: '))
     create_teams_random(new_league, num_of_teams)
+    print('Generating teams successful')
 
 
 def create_team(team_name, team_league, team_city):
@@ -104,7 +115,7 @@ def create_teams_random(team_league, num_of_teams):
     # TODO
     print('\nGenerating teams...\n')
 
-    num_of_players = int(input('\nHow many players do you want in a team?\n'))
+    num_of_players = int(input('\nHow many players do you want in a team? '))
 
     # To keep track of used team name
     team_names = set()
@@ -137,13 +148,19 @@ def create_player(player_first_name, player_last_name, player_jersey_number, pla
 
 
 def create_players_random(player_team, num_of_players):
-    player_names = set()
+    player_jersey_numbers = set()
     for _ in range(num_of_players):
         # Get player details
         player_first_name = fake.first_name_male()
         player_last_name = fake.last_name_male()
-        player_jersey_number = generate_random_jersey_number()
 
+        jersey_number = generate_random_jersey_number()
+        while jersey_number in player_jersey_numbers:
+            jersey_number = generate_random_jersey_number()
+        player_jersey_number = jersey_number
+        player_jersey_numbers.add(jersey_number)
+        
+        
         # Create players
         player = create_player(player_first_name, player_last_name, player_jersey_number, player_team)
         
